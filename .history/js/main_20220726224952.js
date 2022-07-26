@@ -1,4 +1,4 @@
-import { GAME_STATUS, PAIRS_COUNT } from './constants.js'
+import { GAME_STATUS } from './constants.js'
 import { getRandomColorPairs } from './utils.js'
 // Global variables
 let selections = []
