@@ -27,10 +27,7 @@ export const getRandomColorPairs = (count) => {
     })
     colorList.push(color)
   }
-  //double current color list
-  const fullColorList = [...colorList, ...colorList]
-  // shuffle it
-  shuffle(fullColorList)
 
+  const fullColorList = [...colorList, ...colorList]
   return fullColorList
 }
