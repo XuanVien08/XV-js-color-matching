@@ -1,4 +1,4 @@
-import { getPlayAgainButton, getTimerElement } from './selectors.js'
+import { getPlayAgainButton, getTimerElement, getBackgroundColor } from './selectors.js'
 function shuffle(array) {
   if (!Array.isArray(array) || array.length <= 2) return
 
@@ -51,4 +51,35 @@ export function hidePlayAgainButton() {
 export function setTimerText(text) {
   const timerElement = getTimerElement()
   if (timerElement) timerElement.textContent = text
+}
+
+export function createTimer({ seconds, onChange, onFinish }) {
+  let intervalId = null
+  function start() {
+    clear()
+    let currentSecond = seconds
+    intervalId = setInterval(() => {
+      // if (onChange) onChange(currentSecond)
+      onChange?.(currentSecond)
+      currentSecond--
+      if (currentSecond < 0) {
+        clear()
+        onFinish?.()
+      }
+    }, 1000)
+  }
+
+  function clear() {
+    clearInterval(intervalId)
+  }
+
+  return {
+    start,
+    clear,
+  }
+}
+
+export function setBackgroundColor(color) {
+  const backgroundColor = getBackgroundColor()
+  if (backgroundColor) backgroundColor.style.backgroundColor = color
 }

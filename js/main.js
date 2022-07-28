@@ -1,4 +1,4 @@
-import { GAME_STATUS, PAIRS_COUNT } from './constants.js'
+import { GAME_STATUS, PAIRS_COUNT, GAME_TIME, winText, loseText } from './constants.js'
 import {
   getColorElementList,
   getColorListElement,
@@ -11,10 +11,29 @@ import {
   hidePlayAgainButton,
   setTimerText,
   showPlayAgainButton,
+  createTimer,
+  setBackgroundColor,
 } from './utils.js'
 // Global variables
 let selections = []
 let gameStatus = GAME_STATUS.PLAYING
+let timer = createTimer({
+  seconds: GAME_TIME,
+  onChange: handleTimerChange,
+  onFinish: handleTimerFinish,
+})
+
+function handleTimerChange(second) {
+  const fullSecond = `0${second}`.slice(-2)
+  setTimerText(fullSecond)
+}
+
+function handleTimerFinish() {
+  gameStatus = GAME_STATUS.FINISHED
+  setTimerText(loseText)
+  showPlayAgainButton()
+}
+
 // TODOs
 // 1. Generating colors using https://github.com/davidmerfield/randomColor
 // 2. Attach item click for all li elements
@@ -39,14 +58,16 @@ function handleColorClick(liElement) {
   const isMatch = firstColor === secondColor
   if (isMatch) {
     //check win
+    setBackgroundColor(firstColor)
     const isWin = getInActiveColorList().length === 0
 
     if (isWin) {
       //show replay button
       showPlayAgainButton()
       //show you win
-      setTimerText('YOU WIN ❤😘')
-
+      setTimerText(winText)
+      //clear timer
+      timer.clear()
       gameStatus = GAME_STATUS.FINISHED
     }
 
@@ -60,7 +81,10 @@ function handleColorClick(liElement) {
     selections[0].classList.remove('active')
     selections[1].classList.remove('active')
     selections = []
-    gameStatus = GAME_STATUS.PLAYING
+    // race-condition check with handleTimerFinish
+    if (gameStatus !== GAME_STATUS.FINISHED) {
+      gameStatus = GAME_STATUS.PLAYING
+    }
   }, 500)
   //reset selection for next turn
 }
@@ -106,6 +130,12 @@ function resetGame() {
   setTimerText('')
   // re-generate new color
   initColor()
+
+  // reset background color
+  setBackgroundColor('goldenrod')
+
+  // start a new game
+  startTimer()
 }
 
 function attachEvenForPlayAgainButton() {
@@ -116,10 +146,15 @@ function attachEvenForPlayAgainButton() {
   playAgainButton.addEventListener('click', resetGame)
 }
 
+function startTimer() {
+  timer.start()
+}
+
 //MAIN
 ;(() => {
   initColor()
 
   attachEvenForColorList()
   attachEvenForPlayAgainButton()
+  startTimer()
 })()

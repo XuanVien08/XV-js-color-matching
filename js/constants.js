@@ -7,3 +7,6 @@ export const GAME_STATUS = {
 
 export const PAIRS_COUNT = 8
 export const GAME_TIME = 30
+
+export const winText = 'YOU WIN 😘'
+export const loseText = 'GAME OVER :('
